@@ -25,5 +25,5 @@
 ### Project structure
 
 `Main`  
-&nbsp;&nbsp;&nbsp;&nbsp; |  
+&nbsp;&nbsp;&nbsp;&nbsp; |&mdash; Model &mdash; `Task`  
 &nbsp;&nbsp;&nbsp;&nbsp; |&mdash; View &mdash; `TaskUI`  
