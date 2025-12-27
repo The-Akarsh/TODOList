@@ -1,0 +1,11 @@
+# Set default behavior to handle all files as text and normalize to LF in repo
+* text=auto
+
+# Explicitly declare text files that should always be normalized
+*.java text
+*.py text
+*.c text
+
+# Ensure Windows-specific files keep CRLF if necessary
+*.bat text eol=crlf
+*.sln text eol=crlf

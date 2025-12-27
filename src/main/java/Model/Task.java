@@ -14,13 +14,14 @@ public class Task {
 
 
 
-    Task(String name, String description, int priority){
+    public Task(String name, String description, int priority,LocalDateTime deadline ){
         ++lastId;
         this.task_number = lastId;
         this.name = name;
         this.description = description;
         this.priority = priority;
         this.created_at = LocalDateTime.now();
+        this.deadline = deadline;
         this.isComplete = false;
     }
 

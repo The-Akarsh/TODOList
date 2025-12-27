@@ -36,7 +36,7 @@ public class MainUI extends JFrame implements ActionListener {
         String command = e.getActionCommand();
 
         if(command.equals("New Botton")){
-            // TODO
+            TaskUI task = new TaskUI();
         }
         else if(command.equals("Edit Botton")){
             // TODO
