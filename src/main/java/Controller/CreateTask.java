@@ -1,18 +1,15 @@
 package Controller;
 
 import Model.Task;
-import View.TaskUI;
+import Model.TaskList;
 
 import java.time.LocalDateTime;
 
 public class CreateTask {
-    public Task create(TaskUI view){
-        String name = view.getName();
-        String description = view.getDescription();
-        String priority = view.getPriority();
-        String dateTime = view.getDateTime();
-        LocalDateTime deadline = LocalDateTime.parse(dateTime);
+    public static void create(String name, String description, int priority, String dateTime){
 
-        return new Task(name,description,Integer.parseInt(priority),deadline);
+        LocalDateTime deadline = HandleDateTime.stringTOLocalDateTime(dateTime);
+        Task newTask = new Task(name, description, priority, deadline);
+        TaskList.taskList.add(newTask);
     }
 }
