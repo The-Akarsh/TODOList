@@ -13,11 +13,12 @@ import java.util.Date;
  */
 public class TaskUI extends JFrame implements ActionListener {
 
-    JTextField nameField, priorityField;
+    JTextField nameField;
     JTextArea descriptionField;
     JButton Save, cancel;
     JCheckBox enableDeadline;
     JComboBox<String> hourBox, minuteBox, amOrPmBox;
+    JComboBox<Integer> priorityBox;
     JSpinner dateSpinner;
 
     TaskUI(){
@@ -29,6 +30,7 @@ public class TaskUI extends JFrame implements ActionListener {
 
         WindowPanels panels = new WindowPanels();
         add(panels.createNamePanel());
+        add(panels.createPriorityPanel());
         add(panels.createDescriptionPanel());
         add(panels.createDateTimePanel());
 
@@ -47,7 +49,7 @@ public class TaskUI extends JFrame implements ActionListener {
 
     public String getName(){return nameField.getText();}
     public String getDescription(){return descriptionField.getText();}
-    public int getPriority(){return Integer.parseInt(priorityField.getText());}
+    public int getPriority(){return Integer.parseInt(priorityBox.getSelectedItem().toString());}
     public String getDateTime(){
         if (!enableDeadline.isSelected())
             return null;
@@ -64,12 +66,8 @@ public class TaskUI extends JFrame implements ActionListener {
             this.dispose();
         }
         else if(command.equals("Save")){
-            String name = getName();
-            String description = getDescription();
-            int priority = getPriority();
-            String dateTime = getDateTime();
-            CreateTask.create(name, description, priority, dateTime);
 
+            CreateTask.create(this);
             this.dispose();
         }
 
@@ -90,11 +88,18 @@ public class TaskUI extends JFrame implements ActionListener {
             JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             namePanel.add(new JLabel("Name:"));
             nameField = new JTextField(20);
-            namePanel.add(new JLabel("Priority:"));
-            priorityField = new JTextField(1);
             namePanel.add(nameField);
-            namePanel.add(priorityField);
             return namePanel;
+        }
+        JPanel createPriorityPanel(){
+            JPanel priorityPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            priorityPanel.add(new JLabel("Priority:"));
+            Integer[] priorities = {1,2,3,4,5};
+            priorityBox = new JComboBox<>(priorities);
+            priorityBox.setPrototypeDisplayValue(10); // Number of digits inside this is the size of the box. Data type of value = data type of box
+            priorityBox.setSelectedItem(1);
+            priorityPanel.add(priorityBox);
+            return priorityPanel;
         }
         JPanel createDescriptionPanel() {
             JPanel descriptionPanel = new JPanel(new BorderLayout());
@@ -127,11 +132,14 @@ public class TaskUI extends JFrame implements ActionListener {
 //            Setting current time as default values
             java.util.Calendar now = java.util.Calendar.getInstance();
             int nowHour = now.get(java.util.Calendar.HOUR);
+            hourBox.setPrototypeDisplayValue("000");
             if(nowHour == 0) nowHour = 12;
-            hourBox.setSelectedItem(nowHour);
+            hourBox.setSelectedItem(String.format("%02d", nowHour));
             int nowMinutes = now.get(java.util.Calendar.MINUTE);
+            minuteBox.setPrototypeDisplayValue("000");
             minuteBox.setSelectedItem(String.format("%02d", nowMinutes));
             amOrPmBox.setSelectedIndex(now.get(java.util.Calendar.AM_PM));
+            amOrPmBox.setPrototypeDisplayValue("000");
 
             ActionListener toggleAction = e -> {
                 boolean isEnabled = enableDeadline.isSelected();
