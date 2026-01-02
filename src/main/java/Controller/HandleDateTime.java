@@ -19,5 +19,10 @@ public class HandleDateTime {
     public static LocalDateTime stringTOLocalDateTime(String stringTime){
         return LocalDateTime.parse(stringTime,dateTimeFormat);
     }
-//    public static String timeToString() {}
+
+    /**This acceptes a variable of data type LocalDateTime (<code>java.time.LocalDateTime</code>) and
+     * returns a Legacy Date (<code>java.util.Date</code>) */
+    public static Date LocalTOLegacyDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+    }
 }

@@ -2,13 +2,14 @@ package Controller;
 
 import Model.Task;
 import Model.TaskList;
+import View.MainUI;
 import View.TaskUI;
 
 import java.time.LocalDateTime;
 
-public class CreateTask {
     /** Used for taking input from fields of  <code>View.TaskUI</code>. Create and add object of type Task to adds them to array list of
      * type Task in <code>Model.TaskList */
+public class CreateTask {
     public static void create(TaskUI taskUI){
 
         String name = taskUI.getName();
@@ -20,5 +21,6 @@ public class CreateTask {
             deadline = HandleDateTime.stringTOLocalDateTime(dateTime);
         Task newTask = new Task(name, description, priority, deadline);
         TaskList.taskList.add(newTask);
+        new MainUI().refreshTable();
     }
 }

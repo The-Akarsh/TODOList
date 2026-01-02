@@ -2,6 +2,8 @@ package View;
 
 import Controller.HandleDateTime;
 import Controller.CreateTask;
+import Model.Task;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -45,6 +47,31 @@ public class TaskUI extends JFrame implements ActionListener {
         add(buttonPanel);
         pack();
         setVisible(true);
+    }
+    TaskUI(Task task){
+        this();
+        nameField.setText(task.name());
+        descriptionField.setText(task.description());
+        priorityBox.setSelectedItem(task.priority());
+        if(task.deadline() != null){
+            enableDeadline.setSelected(true);
+            Date dateForSpinner = HandleDateTime.LocalTOLegacyDate(task.deadline());
+            dateSpinner.setValue(dateForSpinner);
+            int hour = task.deadline().getHour();
+            if( hour > 11){
+                amOrPmBox.setSelectedIndex(1);
+                if (hour != 12)
+                    hour -= 12;
+            }
+            else{
+                amOrPmBox.setSelectedIndex(0);
+                if (hour == 0)
+                    hour = 12;
+            }
+            int minute = task.deadline().getMinute();
+            hourBox.setSelectedItem(String.format("%02d", hour));
+            minuteBox.setSelectedItem(String.format("%02d", minute));
+        }
     }
 
     public String getName(){return nameField.getText();}

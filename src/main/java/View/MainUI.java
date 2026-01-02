@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static Model.TaskList.taskList;
 
@@ -66,6 +68,17 @@ public class MainUI extends JFrame implements ActionListener {
         taskTable.getColumnModel().getColumn(3).setPreferredWidth(100); // Status completed ? Pending
         JScrollPane scrollPane = new JScrollPane(taskTable);
         add(scrollPane, BorderLayout.CENTER);
+
+        taskTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                if(evt.getClickCount() == 2){
+                    int selectedRow = taskTable.getSelectedRow();
+                    Task selectedTask = taskList.get(selectedRow);
+                    new TaskUI(selectedTask);
+                }
+            }
+        });
 
         pack();
         setVisible(true);
