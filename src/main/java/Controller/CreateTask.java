@@ -20,6 +20,7 @@ public class CreateTask {
             deadline = HandleDateTime.stringTOLocalDateTime(dateTime);
         Task newTask = new Task(name, description, priority, deadline);
         Task.taskList.add(newTask);
+        TaskStorage.saveTask();
         MainUI.getInstance().refreshTable();
     }
 }

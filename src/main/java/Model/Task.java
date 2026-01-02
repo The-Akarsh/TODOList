@@ -28,6 +28,12 @@ public class Task {
         this.deadline = deadline;
         this.isComplete = false;
     }
+    public static int getLastId() {
+        return lastId;
+    }
+    public static void setLastID(int number) {
+        lastId = number;
+    }
 
     public int task_number() {
         return task_number;
