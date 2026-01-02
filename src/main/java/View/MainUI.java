@@ -2,7 +2,6 @@ package View;
 
 import Controller.HandleDateTime;
 import Model.Task;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -11,14 +10,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static Model.TaskList.taskList;
-
 /**
- * This is for main UI of app, it must have a new Task button ( + New ), edit button ( * edit)
- * And show a list of all created tasks, showing there: name, priority, deadline, status as table
+ * Main UI of app. Use <code>MainUI.getINstance()</code> to create instance. MainUI has a new Task button ( + New )
+ * and show a list of all created tasks, showing there: name, priority, deadline, status as table
  */
 public class MainUI extends JFrame implements ActionListener {
 
+    private static MainUI instance;
     JButton newButton, editButton;
     JTable taskTable;
     DefaultTableModel tableModel;
@@ -26,6 +24,7 @@ public class MainUI extends JFrame implements ActionListener {
 
     public MainUI(){
         super("TODO LIST App");
+        instance = this;
         setSize(600,700);
         setLocationRelativeTo(null); // To always open it at center
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,7 +73,7 @@ public class MainUI extends JFrame implements ActionListener {
             public void mouseClicked(MouseEvent evt) {
                 if(evt.getClickCount() == 2){
                     int selectedRow = taskTable.getSelectedRow();
-                    Task selectedTask = taskList.get(selectedRow);
+                    Task selectedTask = Task.taskList.get(selectedRow);
                     new TaskUI(selectedTask);
                 }
             }
@@ -83,13 +82,21 @@ public class MainUI extends JFrame implements ActionListener {
         pack();
         setVisible(true);
     }
+    /** This enforces singleton instance of the MainUi to prevent unwanted behavior.
+     * Creates new instance if no instances are running, else return the running instance*/
+    public static MainUI getInstance(){
+        if(instance == null)
+            instance = new MainUI();
+        return instance;
+    }
+
     /** Refresh contents of the task table by using contents from tasklist*/
     public void refreshTable() {
         // 1. Clear existing rows so we don't add duplicates
         tableModel.setRowCount(0);
 
         // 2. Loop through the list and add rows
-        for (Task task : taskList) {
+        for (Task task : Task.taskList) {
             String deadlineStr = "--/--/----";
             if (task.deadline() != null) {
                 deadlineStr = task.deadline().format(HandleDateTime.dateTimeFormat);

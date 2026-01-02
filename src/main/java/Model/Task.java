@@ -4,15 +4,19 @@
 package Model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Task {
     private static int lastId;
     private int  task_number, priority;
     private String name,description;
-    private LocalDateTime created_at, deadline;
+    private final LocalDateTime created_at;
+    private LocalDateTime deadline;
     private boolean isComplete;
 
-
+    /** Holds an array of all the tasks. Data type is of Task object
+     * Used for writting and reading Tasks in json file and other operations */
+    public static ArrayList<Task> taskList = new ArrayList<>();
 
     public Task(String name, String description, int priority,LocalDateTime deadline ){
         ++lastId;

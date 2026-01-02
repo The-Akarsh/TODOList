@@ -93,7 +93,6 @@ public class TaskUI extends JFrame implements ActionListener {
             this.dispose();
         }
         else if(command.equals("Save")){
-
             CreateTask.create(this);
             this.dispose();
         }
