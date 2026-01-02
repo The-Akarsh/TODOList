@@ -1,7 +1,6 @@
 package Controller;
 
 import Model.Task;
-import Model.TaskList;
 import View.MainUI;
 import View.TaskUI;
 
@@ -20,7 +19,7 @@ public class CreateTask {
         if(dateTime != null)
             deadline = HandleDateTime.stringTOLocalDateTime(dateTime);
         Task newTask = new Task(name, description, priority, deadline);
-        TaskList.taskList.add(newTask);
+        Task.taskList.add(newTask);
         MainUI.getInstance().refreshTable();
     }
 }

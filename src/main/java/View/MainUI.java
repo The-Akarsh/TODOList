@@ -2,7 +2,6 @@ package View;
 
 import Controller.HandleDateTime;
 import Model.Task;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -10,8 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import static Model.TaskList.taskList;
 
 /**
  * Main UI of app. Use <code>MainUI.getINstance()</code> to create instance. MainUI has a new Task button ( + New )
@@ -76,7 +73,7 @@ public class MainUI extends JFrame implements ActionListener {
             public void mouseClicked(MouseEvent evt) {
                 if(evt.getClickCount() == 2){
                     int selectedRow = taskTable.getSelectedRow();
-                    Task selectedTask = taskList.get(selectedRow);
+                    Task selectedTask = Task.taskList.get(selectedRow);
                     new TaskUI(selectedTask);
                 }
             }
@@ -99,7 +96,7 @@ public class MainUI extends JFrame implements ActionListener {
         tableModel.setRowCount(0);
 
         // 2. Loop through the list and add rows
-        for (Task task : taskList) {
+        for (Task task : Task.taskList) {
             String deadlineStr = "--/--/----";
             if (task.deadline() != null) {
                 deadlineStr = task.deadline().format(HandleDateTime.dateTimeFormat);
