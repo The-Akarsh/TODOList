@@ -80,6 +80,7 @@ public class MainUI extends JFrame implements ActionListener {
         });
 
         pack();
+        refreshTable();
         setVisible(true);
     }
     /** This enforces singleton instance of the MainUi to prevent unwanted behavior.
