@@ -1,7 +1,7 @@
 package View;
 
 import Controller.HandleDateTime;
-import Controller.CreateTask;
+import Controller.ManageTask;
 import Model.Task;
 
 import javax.swing.*;
@@ -93,7 +93,7 @@ public class TaskUI extends JFrame implements ActionListener {
             this.dispose();
         }
         else if(command.equals("Save")){
-            CreateTask.create(this);
+            ManageTask.create(this);
             this.dispose();
         }
 

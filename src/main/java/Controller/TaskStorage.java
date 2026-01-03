@@ -55,20 +55,15 @@ public class TaskStorage {
 
     public static void loadTasks() {
         try {
-            // . Read the text from the file (using your existing Json class)
             String json = readJson();
 
-            // 2. Setup Gson (exactly like before)
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                     .create();
 
-            //  Define the specific type we want back: ArrayList<Task>
             Type taskListType = new TypeToken<ArrayList<Task>>(){}.getType();
 
-            //  Convert the JSON string back into Objects
             taskList = gson.fromJson(json, taskListType);
-            // Check if list is null (in case file was empty)
             if (taskList == null) {
                 taskList = new ArrayList<>();
             }

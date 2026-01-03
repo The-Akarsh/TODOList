@@ -13,6 +13,5 @@ public final class Main {
             System.out.println("Could not set the native look and feel.");
         }
         SwingUtilities.invokeLater(MainUI::new);
-//         @TODO
     }
 }

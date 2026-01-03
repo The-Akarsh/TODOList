@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
     /** Used for taking input from fields of  <code>View.TaskUI</code>. Create and add object of type Task to adds them to array list of
      * type Task in <code>Model.TaskList */
-public class CreateTask {
+public class ManageTask {
     public static void create(TaskUI taskUI){
 
         String name = taskUI.getName();
