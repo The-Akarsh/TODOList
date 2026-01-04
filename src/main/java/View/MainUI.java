@@ -17,7 +17,7 @@ import java.awt.event.MouseEvent;
 public class MainUI extends JFrame implements ActionListener {
 
     private static MainUI instance;
-    JButton newButton, editButton;
+    JButton newTaskButton;
     JTable taskTable;
     DefaultTableModel tableModel;
 
@@ -42,12 +42,9 @@ public class MainUI extends JFrame implements ActionListener {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // Setting up buttons
-        newButton = new JButton("New Botton");
-        newButton.addActionListener(this);
-        buttonPanel.add(newButton);
-        editButton = new JButton("Edit Botton");
-        editButton.addActionListener(this);
-        buttonPanel.add(editButton);
+        newTaskButton = new JButton("New task(+)");
+        newTaskButton.addActionListener(this);
+        buttonPanel.add(newTaskButton);
         topPanel.add(buttonPanel);
 
         add(topPanel, BorderLayout.NORTH);
@@ -115,15 +112,13 @@ public class MainUI extends JFrame implements ActionListener {
     }
 
 
+
     @Override
     public void actionPerformed(ActionEvent e){
-        String command = e.getActionCommand();
+        Object source = e.getSource();
 
-        if(command.equals("New Botton")){
+        if(source == newTaskButton){
             TaskUI task = new TaskUI();
-        }
-        else if(command.equals("Edit Botton")){
-            // TODO
         }
     }
 }
