@@ -10,8 +10,13 @@ import java.time.LocalDateTime;
      * type Task in <code>Model.TaskList */
 public class ManageTask {
     public static void create(TaskUI taskUI){
-
-        String name = taskUI.getName();
+        String name;
+        if(!taskUI.getName().isBlank()) {
+            name = taskUI.getName();
+        }
+        else{
+            name = "Task " +  (Task.getLastId() + 1);
+        }
         String description = taskUI.getDescription();
         int priority = taskUI.getPriority();
         String dateTime = taskUI.getDateTime();
