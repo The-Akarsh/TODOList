@@ -25,7 +25,7 @@ public class MainUI extends JFrame implements ActionListener {
     public MainUI(){
         super("TODO LIST App");
         instance = this;
-        setSize(600,700);
+        setSize(400,600);
         setLocationRelativeTo(null); // To always open it at center
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
@@ -68,10 +68,13 @@ public class MainUI extends JFrame implements ActionListener {
         taskTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if(evt.getClickCount() == 2){
                     int selectedRow = taskTable.getSelectedRow();
                     Task selectedTask = Task.taskList.get(selectedRow);
-                    new TaskUI(selectedTask);
+                if(evt.getClickCount() == 1){
+                    new TaskUI(selectedTask,false);
+                }
+                if(evt.getClickCount() == 2){
+                    new TaskUI(selectedTask,true);
                 }
             }
         });
