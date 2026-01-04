@@ -23,6 +23,8 @@ public class TaskUI extends JFrame implements ActionListener {
     JComboBox<Integer> priorityBox;
     JSpinner dateSpinner;
 
+    private Task currentTask = null;
+
     TaskUI(){
         super("Create Task");
 
@@ -50,6 +52,7 @@ public class TaskUI extends JFrame implements ActionListener {
     }
     TaskUI(Task task,boolean isEditable){
         this();
+        this.currentTask = task;
         nameField.setText(task.name());
         descriptionField.setText(task.description());
         priorityBox.setSelectedItem(task.priority());
@@ -72,7 +75,11 @@ public class TaskUI extends JFrame implements ActionListener {
             hourBox.setSelectedItem(String.format("%02d", hour));
             minuteBox.setSelectedItem(String.format("%02d", minute));
 
-        }if(!isEditable){
+        }
+        if(isEditable){
+            ManageTask.edit(this,task);
+        }
+        if(!isEditable){
             nameField.setEditable(false);
             descriptionField.setEditable(false);
             priorityBox.setEditable(false);
@@ -114,7 +121,12 @@ public class TaskUI extends JFrame implements ActionListener {
             this.dispose();
         }
         else if(source ==  save){
-            ManageTask.create(this);
+            if(currentTask == null){
+                ManageTask.create(this);
+            }
+            else{
+                ManageTask.edit(this,currentTask);
+            }
             this.dispose();
         }
     }

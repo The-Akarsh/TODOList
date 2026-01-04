@@ -70,11 +70,11 @@ public class MainUI extends JFrame implements ActionListener {
             public void mouseClicked(MouseEvent evt) {
                     int selectedRow = taskTable.getSelectedRow();
                     Task selectedTask = Task.taskList.get(selectedRow);
-                if(evt.getClickCount() == 1){
-                    new TaskUI(selectedTask,false);
-                }
                 if(evt.getClickCount() == 2){
                     new TaskUI(selectedTask,true);
+                }
+                if(evt.getClickCount() == 1){
+                    new TaskUI(selectedTask,false);
                 }
             }
         });
