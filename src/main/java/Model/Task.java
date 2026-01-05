@@ -35,40 +35,36 @@ public class Task {
         lastId = number;
     }
 
-    public int task_number() {
+    public int getTaskNumber() {
         return task_number;
     }
 
-    public Task setTask_number(int task_number) {
+    public void setTask_number(int task_number) {
         this.task_number = task_number;
-        return this;
     }
 
     public int priority() {
         return priority;
     }
 
-    public Task setPriority(int priority) {
+    public void setPriority(int priority) {
         this.priority = priority;
-        return this;
     }
 
     public String name() {
         return name;
     }
 
-    public Task setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
     public String description() {
         return description;
     }
 
-    public Task setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
-        return this;
     }
 
     public LocalDateTime getCreated_at() {
@@ -76,13 +72,12 @@ public class Task {
     }
 
 
-    public LocalDateTime deadline() {
+    public LocalDateTime getDeadLine() {
         return deadline;
     }
 
-    public Task setDeadline(LocalDateTime deadline) {
+    public void setDeadline(LocalDateTime deadline) {
         this.deadline = deadline;
-        return this;
     }
 
     public boolean isComplete() {

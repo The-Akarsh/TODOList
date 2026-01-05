@@ -15,6 +15,10 @@ public class HandleDateTime {
         String newDate = dateFormat.format(date);
         return time + " " + newDate;
     }
+/** Accept LocatDateTime and return String*/
+    public static String LocalDateTimeToString(LocalDateTime localDateTime){
+        return localDateTime.format(dateTimeFormat);
+    }
     /**Takes String data type as input and returns LocalDateTime data type in dateTimeFormat(self defined) format */
     public static LocalDateTime stringTOLocalDateTime(String stringTime){
         return LocalDateTime.parse(stringTime,dateTimeFormat);
