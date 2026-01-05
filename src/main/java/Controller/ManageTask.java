@@ -18,6 +18,14 @@ public class ManageTask {
         }
         return "Task " + (Task.getLastId() + 1);
     }
+/** Returns current date and Time using <code>LocalDateTime.now()</code> is string format
+ *  according to <code>Controller.HandleDateTime.dateTimeFormat</code>*/
+    private static String getDescriptionFromUI(TaskUI taskUI) {
+        if (!taskUI.getDescription().isBlank()) {
+            return taskUI.getDescription();
+        }
+        return "Created at " + HandleDateTime.LocalDateTimeToString(LocalDateTime.now());
+    }
 
 /** Returns LocalDateTime if present else return null*/
     private static LocalDateTime getDeadlineFromUI(TaskUI taskUI) {
@@ -41,7 +49,8 @@ public class ManageTask {
     public static void create(TaskUI taskUI){
         String name = getNameFromUI(taskUI);
         LocalDateTime deadline = getDeadlineFromUI(taskUI);
-        Task newTask = new Task(name, taskUI.getDescription(), taskUI.getPriority(), deadline);
+        String description = getDescriptionFromUI(taskUI);
+        Task newTask = new Task(name, description, taskUI.getPriority(), deadline);
         taskList.add(newTask);
         finalSave();
     }
@@ -50,9 +59,14 @@ public class ManageTask {
         task.setName(getNameFromUI(taskUI));
         task.setDescription(taskUI.getDescription());
         task.setPriority(taskUI.getPriority());
-        String dateTime = taskUI.getDateTime();
         task.setDeadline(getDeadlineFromUI(taskUI));
-        taskList.set(task.task_number() -1, task);
+        task.setComplete(taskUI.getIsCompleted());
+        taskList.set(task.getTaskNumber() -1, task);
+        finalSave();
+    }
+/** Removes task from <code>Model.Task.taskList</code> and updates the UI*/
+    public static void delete(Task task){
+        taskList.remove(task);
         finalSave();
     }
 }

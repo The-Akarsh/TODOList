@@ -1,6 +1,7 @@
 package View;
 
 import Controller.HandleDateTime;
+import Controller.ManageTask;
 import Model.Task;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,7 +18,8 @@ import java.awt.event.MouseEvent;
 public class MainUI extends JFrame implements ActionListener {
 
     private static MainUI instance;
-    JButton newTaskButton;
+    private static Task currentTask;
+    JButton newTaskButton, viewButton, editButton, deleteButton;
     JTable taskTable;
     DefaultTableModel tableModel;
 
@@ -40,14 +42,20 @@ public class MainUI extends JFrame implements ActionListener {
         topPanel.add(Box.createVerticalStrut(10)); // Spacer
         add(topPanel, BorderLayout.NORTH);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // Setting up buttons
-        newTaskButton = new JButton("New task(+)");
-        newTaskButton.addActionListener(this);
-        buttonPanel.add(newTaskButton);
-        topPanel.add(buttonPanel);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        newTaskButton = createButton("New task(+)", buttonPanel);
+        viewButton = createButton("View", buttonPanel);
+        editButton = createButton("Edit", buttonPanel);
+        deleteButton = createButton("Delete", buttonPanel);
 
+        viewButton.setEnabled(false);
+        editButton.setEnabled(false);
+        deleteButton.setEnabled(false);
+
+        topPanel.add(buttonPanel);
         add(topPanel, BorderLayout.NORTH);
+
         // Table
 
         String[] tableColumns = {"Name","Priority","Deadline","Status"};
@@ -68,16 +76,17 @@ public class MainUI extends JFrame implements ActionListener {
         taskTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                    int selectedRow = taskTable.getSelectedRow();
-                    Task selectedTask = Task.taskList.get(selectedRow);
+                int selectedRow = taskTable.getSelectedRow();
+                currentTask = Task.taskList.get(selectedRow);
+                editButton.setEnabled(true);
+                deleteButton.setEnabled(true);
+                viewButton.setEnabled(true);
                 if(evt.getClickCount() == 2){
-                    new TaskUI(selectedTask,true);
-                }
-                if(evt.getClickCount() == 1){
-                    new TaskUI(selectedTask,false);
+                    new TaskUI(currentTask,false);
                 }
             }
         });
+
 
         pack();
         refreshTable();
@@ -99,8 +108,8 @@ public class MainUI extends JFrame implements ActionListener {
         // 2. Loop through the list and add rows
         for (Task task : Task.taskList) {
             String deadlineStr = "--/--/----";
-            if (task.deadline() != null) {
-                deadlineStr = task.deadline().format(HandleDateTime.dateTimeFormat);
+            if (task.getDeadLine() != null) {
+                deadlineStr = task.getDeadLine().format(HandleDateTime.dateTimeFormat);
             }
 
             Object[] rowData = {
@@ -111,7 +120,17 @@ public class MainUI extends JFrame implements ActionListener {
             };
 
             tableModel.addRow(rowData);
+//            Resets lastID to size of taskList at every refresh
+            Task.setLastID(Task.taskList.size());
         }
+    }
+/** Accepts String and JPanel as input. Creates new button with specified string as text, adds ActionListener
+ * then adds the button to the specified panel and return the button*/
+    public JButton createButton(String text, JPanel panel){
+        JButton button = new JButton(text);
+        button.addActionListener(this);
+        panel.add(button);
+        return button;
     }
 
 
@@ -121,7 +140,16 @@ public class MainUI extends JFrame implements ActionListener {
         Object source = e.getSource();
 
         if(source == newTaskButton){
-            TaskUI task = new TaskUI();
+            new TaskUI();
+        }
+        else if(source == viewButton){
+            new TaskUI(currentTask,false);
+        }
+        else if(source == editButton){
+            new TaskUI(currentTask,true);
+        }
+        else if(source == deleteButton){
+            ManageTask.delete(currentTask);
         }
     }
 }
