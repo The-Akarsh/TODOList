@@ -17,7 +17,7 @@ import java.awt.event.MouseEvent;
 public class MainUI extends JFrame implements ActionListener {
 
     private static MainUI instance;
-    JButton newButton, editButton;
+    JButton newTaskButton;
     JTable taskTable;
     DefaultTableModel tableModel;
 
@@ -25,7 +25,7 @@ public class MainUI extends JFrame implements ActionListener {
     public MainUI(){
         super("TODO LIST App");
         instance = this;
-        setSize(600,700);
+        setSize(400,600);
         setLocationRelativeTo(null); // To always open it at center
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
@@ -42,12 +42,9 @@ public class MainUI extends JFrame implements ActionListener {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // Setting up buttons
-        newButton = new JButton("New Botton");
-        newButton.addActionListener(this);
-        buttonPanel.add(newButton);
-        editButton = new JButton("Edit Botton");
-        editButton.addActionListener(this);
-        buttonPanel.add(editButton);
+        newTaskButton = new JButton("New task(+)");
+        newTaskButton.addActionListener(this);
+        buttonPanel.add(newTaskButton);
         topPanel.add(buttonPanel);
 
         add(topPanel, BorderLayout.NORTH);
@@ -71,10 +68,13 @@ public class MainUI extends JFrame implements ActionListener {
         taskTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if(evt.getClickCount() == 2){
                     int selectedRow = taskTable.getSelectedRow();
                     Task selectedTask = Task.taskList.get(selectedRow);
-                    new TaskUI(selectedTask);
+                if(evt.getClickCount() == 2){
+                    new TaskUI(selectedTask,true);
+                }
+                if(evt.getClickCount() == 1){
+                    new TaskUI(selectedTask,false);
                 }
             }
         });
@@ -115,15 +115,13 @@ public class MainUI extends JFrame implements ActionListener {
     }
 
 
+
     @Override
     public void actionPerformed(ActionEvent e){
-        String command = e.getActionCommand();
+        Object source = e.getSource();
 
-        if(command.equals("New Botton")){
+        if(source == newTaskButton){
             TaskUI task = new TaskUI();
-        }
-        else if(command.equals("Edit Botton")){
-            // TODO
         }
     }
 }

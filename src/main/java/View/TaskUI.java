@@ -17,11 +17,13 @@ public class TaskUI extends JFrame implements ActionListener {
 
     JTextField nameField;
     JTextArea descriptionField;
-    JButton Save, cancel;
+    JButton save, cancel;
     JCheckBox enableDeadline;
     JComboBox<String> hourBox, minuteBox, amOrPmBox;
     JComboBox<Integer> priorityBox;
     JSpinner dateSpinner;
+
+    private Task currentTask = null;
 
     TaskUI(){
         super("Create Task");
@@ -37,9 +39,9 @@ public class TaskUI extends JFrame implements ActionListener {
         add(panels.createDateTimePanel());
 
         JPanel buttonPanel = new JPanel();
-        Save = new JButton("Save");
-        Save.addActionListener(this);
-        buttonPanel.add(Save);
+        save = new JButton("Save");
+        save.addActionListener(this);
+        buttonPanel.add(save);
         cancel = new JButton("Cancel");
         cancel.addActionListener(this);
         buttonPanel.add(cancel);
@@ -48,8 +50,9 @@ public class TaskUI extends JFrame implements ActionListener {
         pack();
         setVisible(true);
     }
-    TaskUI(Task task){
+    TaskUI(Task task,boolean isEditable){
         this();
+        this.currentTask = task;
         nameField.setText(task.name());
         descriptionField.setText(task.description());
         priorityBox.setSelectedItem(task.priority());
@@ -71,6 +74,30 @@ public class TaskUI extends JFrame implements ActionListener {
             int minute = task.deadline().getMinute();
             hourBox.setSelectedItem(String.format("%02d", hour));
             minuteBox.setSelectedItem(String.format("%02d", minute));
+
+        }
+        if(isEditable){
+            ManageTask.edit(this,task);
+        }
+        if(!isEditable){
+            nameField.setEditable(false);
+            descriptionField.setEditable(false);
+            priorityBox.setEditable(false);
+            if(task.deadline() != null) {
+                enableDeadline.setEnabled(false);
+                hourBox.setEnabled(false);
+                minuteBox.setEnabled(false);
+                amOrPmBox.setEnabled(false);
+                dateSpinner.setEnabled(false);
+                save.setVisible(false);
+                cancel.setText("Close");
+            }else{
+                enableDeadline.setVisible(false);
+                hourBox.setVisible(false);
+                minuteBox.setVisible(false);
+                amOrPmBox.setVisible(false);
+                dateSpinner.setVisible(false);
+            }
         }
     }
 
@@ -88,15 +115,20 @@ public class TaskUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String command  = e.getActionCommand();
+        Object source = e.getSource();
 
-        if(command.equals("Cancel")){
+        if(source == cancel){
             this.dispose();
         }
-        else if(command.equals("Save")){
-            ManageTask.create(this);
+        else if(source ==  save){
+            if(currentTask == null){
+                ManageTask.create(this);
+            }
+            else{
+                ManageTask.edit(this,currentTask);
+            }
             this.dispose();
         }
-
     }
 
 
