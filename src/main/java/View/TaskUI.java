@@ -56,11 +56,11 @@ public class TaskUI extends JFrame implements ActionListener {
         nameField.setText(task.name());
         descriptionField.setText(task.description());
         priorityBox.setSelectedItem(task.priority());
-        if(task.deadline() != null){
+        if(task.getDeadLine() != null){
             enableDeadline.setSelected(true);
-            Date dateForSpinner = HandleDateTime.LocalTOLegacyDate(task.deadline());
+            Date dateForSpinner = HandleDateTime.LocalTOLegacyDate(task.getDeadLine());
             dateSpinner.setValue(dateForSpinner);
-            int hour = task.deadline().getHour();
+            int hour = task.getDeadLine().getHour();
             if( hour > 11){
                 amOrPmBox.setSelectedIndex(1);
                 if (hour != 12)
@@ -71,7 +71,7 @@ public class TaskUI extends JFrame implements ActionListener {
                 if (hour == 0)
                     hour = 12;
             }
-            int minute = task.deadline().getMinute();
+            int minute = task.getDeadLine().getMinute();
             hourBox.setSelectedItem(String.format("%02d", hour));
             minuteBox.setSelectedItem(String.format("%02d", minute));
 
@@ -83,7 +83,7 @@ public class TaskUI extends JFrame implements ActionListener {
             nameField.setEditable(false);
             descriptionField.setEditable(false);
             priorityBox.setEditable(false);
-            if(task.deadline() != null) {
+            if(task.getDeadLine() != null) {
                 enableDeadline.setEnabled(false);
                 hourBox.setEnabled(false);
                 minuteBox.setEnabled(false);
@@ -114,7 +114,6 @@ public class TaskUI extends JFrame implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        String command  = e.getActionCommand();
         Object source = e.getSource();
 
         if(source == cancel){
