@@ -42,14 +42,20 @@ public class MainUI extends JFrame implements ActionListener {
         topPanel.add(Box.createVerticalStrut(10)); // Spacer
         add(topPanel, BorderLayout.NORTH);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         // Setting up buttons
-        newTaskButton = new JButton("New task(+)");
-        newTaskButton.addActionListener(this);
-        buttonPanel.add(newTaskButton);
-        topPanel.add(buttonPanel);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        newTaskButton = createButton("New task(+)", buttonPanel);
+        viewButton = createButton("View", buttonPanel);
+        editButton = createButton("Edit", buttonPanel);
+        deleteButton = createButton("Delete", buttonPanel);
 
+        viewButton.setEnabled(false);
+        editButton.setEnabled(false);
+        deleteButton.setEnabled(false);
+
+        topPanel.add(buttonPanel);
         add(topPanel, BorderLayout.NORTH);
+
         // Table
 
         String[] tableColumns = {"Name","Priority","Deadline","Status"};
@@ -81,18 +87,6 @@ public class MainUI extends JFrame implements ActionListener {
             }
         });
 
-        viewButton = new JButton("View");
-        viewButton.addActionListener(this);
-        buttonPanel.add(viewButton);
-        editButton = new JButton("Edit");
-        editButton.addActionListener(this);
-        buttonPanel.add(editButton);
-        deleteButton = new JButton("Delete");
-        deleteButton.addActionListener(this);
-        buttonPanel.add(deleteButton);
-        viewButton.setEnabled(false);
-        editButton.setEnabled(false);
-        deleteButton.setEnabled(false);
 
         pack();
         refreshTable();
@@ -130,7 +124,14 @@ public class MainUI extends JFrame implements ActionListener {
             Task.setLastID(Task.taskList.size());
         }
     }
-
+/** Accepts String and JPanel as input. Creates new button with specified string as text, adds ActionListener
+ * then adds the button to the specified panel and return the button*/
+    public JButton createButton(String text, JPanel panel){
+        JButton button = new JButton(text);
+        button.addActionListener(this);
+        panel.add(button);
+        return button;
+    }
 
 
     @Override
