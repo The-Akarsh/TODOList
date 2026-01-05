@@ -60,6 +60,7 @@ public class ManageTask {
         task.setDescription(taskUI.getDescription());
         task.setPriority(taskUI.getPriority());
         task.setDeadline(getDeadlineFromUI(taskUI));
+        task.setComplete(taskUI.getIsCompleted());
         taskList.set(task.getTaskNumber() -1, task);
         finalSave();
     }

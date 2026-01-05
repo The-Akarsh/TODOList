@@ -18,7 +18,7 @@ public class TaskUI extends JFrame implements ActionListener {
     JTextField nameField;
     JTextArea descriptionField;
     JButton save, cancel;
-    JCheckBox enableDeadline;
+    JCheckBox enableDeadline,isCompleted;
     JComboBox<String> hourBox, minuteBox, amOrPmBox;
     JComboBox<Integer> priorityBox;
     JSpinner dateSpinner;
@@ -54,6 +54,7 @@ public class TaskUI extends JFrame implements ActionListener {
         this();
         this.currentTask = task;
         nameField.setText(task.name());
+        isCompleted.setSelected(task.isComplete());
         descriptionField.setText(task.description());
         priorityBox.setSelectedItem(task.priority());
         if(task.getDeadLine() != null){
@@ -77,10 +78,12 @@ public class TaskUI extends JFrame implements ActionListener {
 
         }
         if(isEditable){
+            isCompleted.setEnabled(true);
             ManageTask.edit(this,task);
         }
         if(!isEditable){
             nameField.setEditable(false);
+            isCompleted.setEnabled(false);
             descriptionField.setEditable(false);
             priorityBox.setEditable(false);
             if(task.getDeadLine() != null) {
@@ -112,6 +115,7 @@ public class TaskUI extends JFrame implements ActionListener {
         Date rawDate = (Date) dateSpinner.getValue();
         return HandleDateTime.rawTimeTOSring(rawDate, time);
     }
+    public boolean getIsCompleted(){return isCompleted.isSelected();}
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -146,6 +150,10 @@ public class TaskUI extends JFrame implements ActionListener {
             namePanel.add(new JLabel("Name:"));
             nameField = new JTextField(20);
             namePanel.add(nameField);
+            namePanel.add(new JLabel("Mark as completed:"));
+            isCompleted = new JCheckBox();
+            isCompleted.setEnabled(false);
+            namePanel.add(isCompleted);
             return namePanel;
         }
         JPanel createPriorityPanel(){
