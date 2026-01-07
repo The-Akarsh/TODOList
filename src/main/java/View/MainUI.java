@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 
 /**
  * Main UI of app. Use <code>MainUI.getINstance()</code> to create instance. MainUI has a new Task button ( + New )
@@ -27,6 +28,8 @@ public class MainUI extends JFrame implements ActionListener {
     public MainUI(){
         super("TODO LIST App");
         instance = this;
+
+        setLogo(this);
         setSize(400,600);
         setLocationRelativeTo(null); // To always open it at center
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -100,6 +103,25 @@ public class MainUI extends JFrame implements ActionListener {
         return instance;
     }
 
+/** Sets logo for the window. Accept JFrame as input. location for is stored in <code>String logoPath</code> */
+    public static void setLogo(JFrame frame){
+        String logoPath = "/Icons/Logo.jpg";
+        URL logoUrl = MainUI.class.getResource(logoPath);
+        if (logoUrl != null) {
+            frame.setIconImage(new ImageIcon(logoUrl).getImage());
+        } else {
+            System.err.println("Resource not found: " + logoPath);
+        }
+    }
+
+/** Accepts String and JPanel as input. Creates new button with specified string as text, adds ActionListener
+  * then adds the button to the specified panel and return the button*/
+    public JButton createButton(String text, JPanel panel){
+        JButton button = new JButton(text);
+        button.addActionListener(this);
+        panel.add(button);
+        return button;
+    }
     /** Refresh contents of the task table by using contents from tasklist*/
     public void refreshTable() {
         // 1. Clear existing rows so we don't add duplicates
@@ -123,14 +145,6 @@ public class MainUI extends JFrame implements ActionListener {
 //            Resets lastID to size of taskList at every refresh
             Task.setLastID(Task.taskList.size());
         }
-    }
-/** Accepts String and JPanel as input. Creates new button with specified string as text, adds ActionListener
- * then adds the button to the specified panel and return the button*/
-    public JButton createButton(String text, JPanel panel){
-        JButton button = new JButton(text);
-        button.addActionListener(this);
-        panel.add(button);
-        return button;
     }
 
 

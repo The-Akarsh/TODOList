@@ -27,6 +27,7 @@ public class TaskUI extends JFrame implements ActionListener {
 
     TaskUI(){
         super("Create Task");
+        MainUI.setLogo(this);
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -50,8 +51,11 @@ public class TaskUI extends JFrame implements ActionListener {
         pack();
         setVisible(true);
     }
+
     TaskUI(Task task,boolean isEditable){
         this();
+        MainUI.setLogo(this);
+
         this.currentTask = task;
         nameField.setText(task.name());
         isCompleted.setSelected(task.isComplete());
