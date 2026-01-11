@@ -3,13 +3,11 @@ package View;
 import Controller.HandleDateTime;
 import Controller.ManageTask;
 import Model.Task;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.net.URL;
 
 /**
@@ -90,7 +88,7 @@ public class MainUI extends JFrame implements ActionListener {
             }
         });
 
-
+        setKeyBinding();
         pack();
         refreshTable();
         setVisible(true);
@@ -165,5 +163,40 @@ public class MainUI extends JFrame implements ActionListener {
         else if(source == deleteButton){
             ManageTask.delete(currentTask);
         }
+    }
+
+    private void setKeyBinding(){
+        KeyStroke ctrlN,delete,space;
+        JRootPane rootPane = this.getRootPane();
+        InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = rootPane.getActionMap();
+
+        ctrlN = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK);
+        delete = KeyStroke.getKeyStroke( KeyEvent.VK_DELETE, 0);
+        space = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0);
+
+
+        inputMap.put(ctrlN, "New Task");
+        inputMap.put(delete, "Delete");
+        inputMap.put(space, "View");
+
+        actionMap.put("New Task", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newTaskButton.doClick();
+            }
+        });
+        actionMap.put("Delete", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteButton.doClick();
+            }
+        });
+        actionMap.put("View", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewButton.doClick();
+            }
+        });
     }
 }
