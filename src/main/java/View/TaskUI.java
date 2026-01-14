@@ -28,6 +28,7 @@ public class TaskUI extends JFrame implements ActionListener {
     TaskUI(){
         super("Create Task");
         MainUI.setLogo(this);
+        setResizable(false);
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -176,7 +177,10 @@ public class TaskUI extends JFrame implements ActionListener {
             descriptionPanel.add(new JLabel("Description:"), BorderLayout.NORTH);
 
             descriptionField = new JTextArea(5, 20);
+            descriptionField.setLineWrap(true); // Enable line wrapping
+            descriptionField.setWrapStyleWord(true); // Wrap at word boundaries
             JScrollPane scrollPane = new JScrollPane(descriptionField);
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizontal scrollbar
             descriptionPanel.add(scrollPane, BorderLayout.CENTER);
 
             return descriptionPanel;
@@ -211,6 +215,11 @@ public class TaskUI extends JFrame implements ActionListener {
             amOrPmBox.setSelectedIndex(now.get(java.util.Calendar.AM_PM));
             amOrPmBox.setPrototypeDisplayValue("000");
 
+            dateSpinner.setEnabled(false);
+            hourBox.setEnabled(false);
+            minuteBox.setEnabled(false);
+            amOrPmBox.setEnabled(false);
+
             ActionListener toggleAction = e -> {
                 boolean isEnabled = enableDeadline.isSelected();
                 dateSpinner.setEnabled(isEnabled);
@@ -219,7 +228,7 @@ public class TaskUI extends JFrame implements ActionListener {
                 amOrPmBox.setEnabled(isEnabled);
             };
             enableDeadline.addActionListener(toggleAction);
-            enableDeadline.setSelected(true);
+            enableDeadline.setSelected(false);
 
             datePanel.add(enableDeadline);
             datePanel.add(Box.createHorizontalStrut(10));

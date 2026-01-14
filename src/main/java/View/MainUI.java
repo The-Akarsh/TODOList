@@ -21,6 +21,7 @@ public class MainUI extends JFrame implements ActionListener {
     JButton newTaskButton, viewButton, editButton, deleteButton;
     JTable taskTable;
     DefaultTableModel tableModel;
+    JLabel taskCountLabel;
 
 
     public MainUI(){
@@ -55,6 +56,14 @@ public class MainUI extends JFrame implements ActionListener {
         deleteButton.setEnabled(false);
 
         topPanel.add(buttonPanel);
+
+        // Task Count text
+        taskCountLabel = new JLabel("Total tasks: 0");
+        taskCountLabel.setForeground(Color.GRAY);
+        taskCountLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        taskCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        topPanel.add(taskCountLabel);
+
         add(topPanel, BorderLayout.NORTH);
 
         // Table
@@ -124,6 +133,7 @@ public class MainUI extends JFrame implements ActionListener {
     public void refreshTable() {
         // 1. Clear existing rows so we don't add duplicates
         tableModel.setRowCount(0);
+        int completedTasks = 0;
 
         // 2. Loop through the list and add rows
         for (Task task : Task.taskList) {
@@ -131,7 +141,8 @@ public class MainUI extends JFrame implements ActionListener {
             if (task.getDeadLine() != null) {
                 deadlineStr = task.getDeadLine().format(HandleDateTime.dateTimeFormat);
             }
-
+            if(task.isComplete())
+                completedTasks++;
             Object[] rowData = {
                     task.name(),
                     task.priority(),
@@ -142,6 +153,12 @@ public class MainUI extends JFrame implements ActionListener {
             tableModel.addRow(rowData);
 //            Resets lastID to size of taskList at every refresh
             Task.setLastID(Task.taskList.size());
+        }
+        
+        // Update task count label
+        if (taskCountLabel != null) {
+            taskCountLabel.setText("Total tasks: " + Task.taskList.size() + ", total tasks completed: " + completedTasks
+            + ", total tasks in progress: " + (Task.taskList.size()-completedTasks));
         }
     }
 
@@ -161,7 +178,9 @@ public class MainUI extends JFrame implements ActionListener {
             new TaskUI(currentTask,true);
         }
         else if(source == deleteButton){
-            ManageTask.delete(currentTask);
+            if (confirmDeletion()) {
+                ManageTask.delete(currentTask);
+            }
         }
     }
 
@@ -205,5 +224,23 @@ public class MainUI extends JFrame implements ActionListener {
                 editButton.doClick();
             }
         });
+    }
+
+    /** Provides a confirmation box and returns a boolean value<br>
+     *  Parameter: None<br>
+     *  return: boolean */
+    private boolean confirmDeletion() {
+        String title = "Delete Task: " + currentTask.name();
+        String message = "Are you sure you want to delete this task?";
+        
+        int response = JOptionPane.showConfirmDialog(
+            this, 
+            message, 
+            title, 
+            JOptionPane.YES_NO_OPTION, 
+            JOptionPane.WARNING_MESSAGE
+        );
+
+        return response == JOptionPane.YES_OPTION;
     }
 }
