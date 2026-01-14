@@ -3,13 +3,11 @@ package View;
 import Controller.HandleDateTime;
 import Controller.ManageTask;
 import Model.Task;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.net.URL;
 
 /**
@@ -23,6 +21,7 @@ public class MainUI extends JFrame implements ActionListener {
     JButton newTaskButton, viewButton, editButton, deleteButton;
     JTable taskTable;
     DefaultTableModel tableModel;
+    JLabel taskCountLabel;
 
 
     public MainUI(){
@@ -57,6 +56,14 @@ public class MainUI extends JFrame implements ActionListener {
         deleteButton.setEnabled(false);
 
         topPanel.add(buttonPanel);
+
+        // Task Count text
+        taskCountLabel = new JLabel("Total tasks: 0");
+        taskCountLabel.setForeground(Color.GRAY);
+        taskCountLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        taskCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        topPanel.add(taskCountLabel);
+
         add(topPanel, BorderLayout.NORTH);
 
         // Table
@@ -90,7 +97,7 @@ public class MainUI extends JFrame implements ActionListener {
             }
         });
 
-
+        setKeyBinding();
         pack();
         refreshTable();
         setVisible(true);
@@ -126,6 +133,7 @@ public class MainUI extends JFrame implements ActionListener {
     public void refreshTable() {
         // 1. Clear existing rows so we don't add duplicates
         tableModel.setRowCount(0);
+        int completedTasks = 0;
 
         // 2. Loop through the list and add rows
         for (Task task : Task.taskList) {
@@ -133,7 +141,8 @@ public class MainUI extends JFrame implements ActionListener {
             if (task.getDeadLine() != null) {
                 deadlineStr = task.getDeadLine().format(HandleDateTime.dateTimeFormat);
             }
-
+            if(task.isComplete())
+                completedTasks++;
             Object[] rowData = {
                     task.name(),
                     task.priority(),
@@ -144,6 +153,12 @@ public class MainUI extends JFrame implements ActionListener {
             tableModel.addRow(rowData);
 //            Resets lastID to size of taskList at every refresh
             Task.setLastID(Task.taskList.size());
+        }
+        
+        // Update task count label
+        if (taskCountLabel != null) {
+            taskCountLabel.setText("Total tasks: " + Task.taskList.size() + ", total tasks completed: " + completedTasks
+            + ", total tasks in progress: " + (Task.taskList.size()-completedTasks));
         }
     }
 
@@ -163,7 +178,69 @@ public class MainUI extends JFrame implements ActionListener {
             new TaskUI(currentTask,true);
         }
         else if(source == deleteButton){
-            ManageTask.delete(currentTask);
+            if (confirmDeletion()) {
+                ManageTask.delete(currentTask);
+            }
         }
+    }
+
+    private void setKeyBinding(){
+        KeyStroke ctrlN,delete,space, ctrlE;
+        JRootPane rootPane = this.getRootPane();
+        InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = rootPane.getActionMap();
+
+        ctrlN = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK);
+        delete = KeyStroke.getKeyStroke( KeyEvent.VK_DELETE, 0);
+        space = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0);
+        ctrlE = KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK);
+
+        inputMap.put(ctrlN, "New Task");
+        inputMap.put(delete, "Delete");
+        inputMap.put(space, "View");
+        inputMap.put(ctrlE, "Edit");
+
+        actionMap.put("New Task", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newTaskButton.doClick();
+            }
+        });
+        actionMap.put("Delete", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteButton.doClick();
+            }
+        });
+        actionMap.put("View", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewButton.doClick();
+            }
+        });
+        actionMap.put("Edit", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editButton.doClick();
+            }
+        });
+    }
+
+    /** Provides a confirmation box and returns a boolean value<br>
+     *  Parameter: None<br>
+     *  return: boolean */
+    private boolean confirmDeletion() {
+        String title = "Delete Task: " + currentTask.name();
+        String message = "Are you sure you want to delete this task?";
+        
+        int response = JOptionPane.showConfirmDialog(
+            this, 
+            message, 
+            title, 
+            JOptionPane.YES_NO_OPTION, 
+            JOptionPane.WARNING_MESSAGE
+        );
+
+        return response == JOptionPane.YES_OPTION;
     }
 }
