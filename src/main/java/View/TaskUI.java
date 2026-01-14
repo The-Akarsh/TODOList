@@ -82,10 +82,11 @@ public class TaskUI extends JFrame implements ActionListener {
 
         }
         if(isEditable){
+            this.setTitle("Edit Task - " + task.name());
             isCompleted.setEnabled(true);
-            ManageTask.edit(this,task);
         }
         if(!isEditable){
+            this.setTitle("View Task - " + task.name());
             nameField.setEditable(false);
             isCompleted.setEnabled(false);
             descriptionField.setEditable(false);

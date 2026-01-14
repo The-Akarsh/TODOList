@@ -166,7 +166,7 @@ public class MainUI extends JFrame implements ActionListener {
     }
 
     private void setKeyBinding(){
-        KeyStroke ctrlN,delete,space;
+        KeyStroke ctrlN,delete,space, ctrlE;
         JRootPane rootPane = this.getRootPane();
         InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = rootPane.getActionMap();
@@ -174,11 +174,12 @@ public class MainUI extends JFrame implements ActionListener {
         ctrlN = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK);
         delete = KeyStroke.getKeyStroke( KeyEvent.VK_DELETE, 0);
         space = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0);
-
+        ctrlE = KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK);
 
         inputMap.put(ctrlN, "New Task");
         inputMap.put(delete, "Delete");
         inputMap.put(space, "View");
+        inputMap.put(ctrlE, "Edit");
 
         actionMap.put("New Task", new AbstractAction() {
             @Override
@@ -196,6 +197,12 @@ public class MainUI extends JFrame implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 viewButton.doClick();
+            }
+        });
+        actionMap.put("Edit", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editButton.doClick();
             }
         });
     }
