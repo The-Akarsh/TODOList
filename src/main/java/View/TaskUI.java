@@ -15,7 +15,8 @@ import java.util.Date;
  */
 public class TaskUI extends JFrame implements ActionListener {
 
-    JTextField nameField;
+    JLabel createdLable,dateLable,timeLabel;
+    JTextField nameField, createdField;
     JTextArea descriptionField;
     JButton save, cancel;
     JCheckBox enableDeadline,isCompleted;
@@ -58,10 +59,13 @@ public class TaskUI extends JFrame implements ActionListener {
         MainUI.setLogo(this);
 
         this.currentTask = task;
+        createdLable.setVisible(true);
+        createdField.setVisible(true);
         nameField.setText(task.name());
         isCompleted.setSelected(task.isComplete());
         descriptionField.setText(task.description());
         priorityBox.setSelectedItem(task.priority());
+        createdField.setText(task.getCreated_at());
         if(task.getDeadLine() != null){
             enableDeadline.setSelected(true);
             Date dateForSpinner = HandleDateTime.LocalTOLegacyDate(task.getDeadLine());
@@ -88,11 +92,16 @@ public class TaskUI extends JFrame implements ActionListener {
         }
         if(!isEditable){
             this.setTitle("View Task - " + task.name());
+            save.setVisible(false);
+            cancel.setText("Close");
             nameField.setEditable(false);
             isCompleted.setEnabled(false);
             descriptionField.setEditable(false);
             priorityBox.setEditable(false);
+            createdLable.setEnabled(true);
+            createdField.setEnabled(true);
             if(task.getDeadLine() != null) {
+                dateLable.setVisible(false);
                 enableDeadline.setEnabled(false);
                 hourBox.setEnabled(false);
                 minuteBox.setEnabled(false);
@@ -170,8 +179,19 @@ public class TaskUI extends JFrame implements ActionListener {
             priorityBox.setPrototypeDisplayValue(10); // Number of digits inside this is the size of the box. Data type of value = data type of box
             priorityBox.setSelectedItem(1);
             priorityPanel.add(priorityBox);
+
+//            Placeholder for showing created date
+            createdLable = new JLabel("Created at:");
+            createdLable.setVisible(false);
+            priorityPanel.add(createdLable);
+            createdField = new JTextField(20);
+            createdField.setEditable(false);
+            createdField.setVisible(false);
+            createdField.setEnabled(false);
+            priorityPanel.add(createdField);
             return priorityPanel;
         }
+
         JPanel createDescriptionPanel() {
             JPanel descriptionPanel = new JPanel(new BorderLayout());
             descriptionPanel.add(new JLabel("Description:"), BorderLayout.NORTH);
@@ -232,9 +252,11 @@ public class TaskUI extends JFrame implements ActionListener {
 
             datePanel.add(enableDeadline);
             datePanel.add(Box.createHorizontalStrut(10));
-            datePanel.add(new JLabel("Time:"));
+            dateLable = new JLabel("Date:");
+            timeLabel = new JLabel("Time:");
+            datePanel.add(timeLabel);
             datePanel.add(hourBox);
-            datePanel.add(new JLabel(":"));
+            datePanel.add(dateLable);
             datePanel.add(minuteBox);
             datePanel.add(amOrPmBox);
             datePanel.add(Box.createHorizontalStrut(10)); // Add a 10px gap for spacing

@@ -3,6 +3,8 @@
  */
 package Model;
 
+import Controller.HandleDateTime;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -46,9 +48,6 @@ public class Task {
         return task_number;
     }
 
-    public void setTask_number(int task_number) {
-        this.task_number = task_number;
-    }
 
     public int priority() {
         return priority;
@@ -74,8 +73,8 @@ public class Task {
         this.description = description;
     }
 
-    public LocalDateTime getCreated_at() {
-        return created_at;
+    public String getCreated_at() {
+        return created_at.format(HandleDateTime.dateTimeFormat);
     }
 
 
@@ -91,8 +90,7 @@ public class Task {
         return isComplete;
     }
 
-    public Task setComplete(boolean complete) {
+    public void setComplete(boolean complete) {
         isComplete = complete;
-        return this;
     }
 }
