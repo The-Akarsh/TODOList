@@ -76,8 +76,14 @@ public class TaskStorage {
                 taskList = new ArrayList<>();
             }
 
-            // Sync the static counter with the size of the loaded list
-            Task.setLastID(taskList.size());
+            // Find the highest ID in the loaded list and initialize the counter
+            int maxId = 0;
+            for (Task task : taskList) {
+                if (task.getTaskNumber() > maxId) {
+                    maxId = task.getTaskNumber();
+                }
+            }
+            Task.initLastId(maxId);
 
         } catch (JsonSyntaxException e) {
             System.err.println("Error parsing tasks from JSON. The file might be corrupted.");

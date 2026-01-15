@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Task {
-    private static int lastId;
+    private static int lastId = 0;
     private int  task_number, priority;
     private String name,description;
     private final LocalDateTime created_at;
@@ -15,7 +15,7 @@ public class Task {
     private boolean isComplete;
 
     /** Holds an array of all the tasks. Data type is of Task object
-     * Used for writting and reading Tasks in json file and other operations */
+     * Used for writting and reading Tasks in JSON file and other operations */
     public static ArrayList<Task> taskList = new ArrayList<>();
 
     public Task(String name, String description, int priority,LocalDateTime deadline ){
@@ -31,8 +31,15 @@ public class Task {
     public static int getLastId() {
         return lastId;
     }
-    public static void setLastID(int number) {
-        lastId = number;
+    
+    /** 
+     * Updates the static counter to ensure new tasks get a unique ID.
+     * Should be called only once after loading tasks from file.
+     */
+    public static void initLastId(int maxId) {
+        if (maxId > lastId) {
+            lastId = maxId;
+        }
     }
 
     public int getTaskNumber() {

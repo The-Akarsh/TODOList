@@ -151,8 +151,6 @@ public class MainUI extends JFrame implements ActionListener {
             };
 
             tableModel.addRow(rowData);
-//            Resets lastID to size of taskList at every refresh
-            Task.setLastID(Task.taskList.size());
         }
         
         // Update task count label
