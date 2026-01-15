@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -39,8 +40,15 @@ class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
 }
 /** Uses Gson Library to perform operations on JSON file Located at <code>Model.task(.json)</code>*/
 public class TaskStorage {
-    private static final String filePath = "src/main/java/Model/Tasks.json";
+    private static final String folderPath = System.getenv("LOCALAPPDATA") + "\\TODO_GUI";
+    private static final String filePath = folderPath + "\\Tasks.json";
+
     public static void saveTask(){
+        File directory = new File(folderPath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
