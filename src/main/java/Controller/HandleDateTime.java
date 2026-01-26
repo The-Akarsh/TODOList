@@ -1,10 +1,11 @@
 package Controller;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.text.SimpleDateFormat;
-/** Created in <code>Model.HandleDateTime</code>. Class contains tools for handling date & time of data type LocalDateTime and String.
+/** <b>May soon be decapricated. date time spinner using legacy <code>Date</code> datatype may be replaced by external dependancy</b><br>
+ * Created in <code>Model.HandleDateTime</code>. Class contains tools for handling date & time of data type LocalDateTime and String.
  *  dateTimeFormatter variable is used to define pattern */
 public class HandleDateTime {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -28,5 +29,11 @@ public class HandleDateTime {
      * returns a Legacy Date (<code>java.util.Date</code>) */
     public static Date LocalTOLegacyDate(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+    }
+    /**Accepts <code>LocalDateTime</code> and return <code>LocalDateTime</code> in format
+     * <code>dateTimeFormat</code>*/
+    public static LocalDateTime DateToLocal(Date date,String time){
+
+        return LocalDateTime.parse((date.toString() + time),dateTimeFormat);
     }
 }

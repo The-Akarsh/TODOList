@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /** Create a "Create new Task" window for user to create a new task.
@@ -101,7 +102,6 @@ public class TaskUI extends JFrame implements ActionListener {
             createdLable.setEnabled(true);
             createdField.setEnabled(true);
             if(task.getDeadLine() != null) {
-                dateLable.setVisible(false);
                 enableDeadline.setEnabled(false);
                 hourBox.setEnabled(false);
                 minuteBox.setEnabled(false);
@@ -111,6 +111,8 @@ public class TaskUI extends JFrame implements ActionListener {
                 cancel.setText("Close");
             }else{
                 enableDeadline.setVisible(false);
+                dateLable.setVisible(false);
+                timeLabel.setVisible(false);
                 hourBox.setVisible(false);
                 minuteBox.setVisible(false);
                 amOrPmBox.setVisible(false);
@@ -119,16 +121,14 @@ public class TaskUI extends JFrame implements ActionListener {
         }
     }
 
-    public String getName(){return nameField.getText();}
-    public String getDescription(){return descriptionField.getText();}
-    public int getPriority(){return Integer.parseInt(priorityBox.getSelectedItem().toString());}
-    public String getDateTime(){
+    public LocalDateTime getDateTime(){
         if (!enableDeadline.isSelected())
             return null;
         String time =  hourBox.getSelectedItem() + ":" + minuteBox.getSelectedItem()
                 + " " + amOrPmBox.getSelectedItem();
-        Date rawDate = (Date) dateSpinner.getValue();
-        return HandleDateTime.rawTimeTOSring(rawDate, time);
+        Date date  = (Date) dateSpinner.getValue();
+        String dateTime = HandleDateTime.rawTimeTOSring(date, time);
+        return HandleDateTime.stringTOLocalDateTime(dateTime);
     }
     public boolean getIsCompleted(){return isCompleted.isSelected();}
     @Override
@@ -139,12 +139,15 @@ public class TaskUI extends JFrame implements ActionListener {
             this.dispose();
         }
         else if(source ==  save){
+            String name = nameField.getText();
+            String description = descriptionField.getText();
+            int priority = Integer.parseInt(priorityBox.getSelectedItem().toString());
             if(currentTask == null){
-                ManageTask.create(this);
+                ManageTask.create(name,description,priority, getDateTime());
             }
-            else{
-                ManageTask.edit(this,currentTask);
-            }
+            /*else{
+                ManageTask.edit(name,description,priority,getDateTime(), getIsCompleted());
+            }*/
             this.dispose();
         }
     }
@@ -252,15 +255,15 @@ public class TaskUI extends JFrame implements ActionListener {
 
             datePanel.add(enableDeadline);
             datePanel.add(Box.createHorizontalStrut(10));
-            dateLable = new JLabel("Date:");
             timeLabel = new JLabel("Time:");
             datePanel.add(timeLabel);
             datePanel.add(hourBox);
-            datePanel.add(dateLable);
+            datePanel.add(new JLabel(":")); // Fixed: Added a new JLabel instead of reusing dateLable which was null
             datePanel.add(minuteBox);
             datePanel.add(amOrPmBox);
             datePanel.add(Box.createHorizontalStrut(10)); // Add a 10px gap for spacing
-            datePanel.add(new JLabel("Date:"));
+            dateLable = new JLabel("Date:");
+            datePanel.add(dateLable);
             datePanel.add(dateSpinner);
 
             return datePanel;
