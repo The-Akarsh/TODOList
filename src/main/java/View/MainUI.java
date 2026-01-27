@@ -144,8 +144,8 @@ public class MainUI extends JFrame implements ActionListener {
             if(task.isComplete())
                 completedTasks++;
             Object[] rowData = {
-                    task.name(),
-                    task.priority(),
+                    task.getName(),
+                    task.getPriority(),
                     deadlineStr,
                     task.isComplete() ? "Done" : "Pending"
             };
@@ -228,7 +228,7 @@ public class MainUI extends JFrame implements ActionListener {
      *  Parameter: None<br>
      *  return: boolean */
     private boolean confirmDeletion() {
-        String title = "Delete Task: " + currentTask.name();
+        String title = "Delete Task: " + currentTask.getName();
         String message = "Are you sure you want to delete this task?";
         
         int response = JOptionPane.showConfirmDialog(

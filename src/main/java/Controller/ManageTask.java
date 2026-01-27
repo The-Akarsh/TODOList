@@ -3,6 +3,7 @@ package Controller;
 import Model.Task;
 import View.MainUI;
 
+import javax.swing.*;
 import java.time.LocalDateTime;
 
 import static Model.Task.taskList;
@@ -28,29 +29,36 @@ public class ManageTask {
     /** Runs <code>Controller.TaskStorage.saveTask</code> and refreshes main window
      *  using <code>View.MainUI.getInstance().refreshTable()</code>*/
     private static void finalSave() {
-        TaskStorage.saveTask();
-        // Check for null to prevent crash if MainUI isn't fully ready (safety check)
-        if (MainUI.getInstance() != null) {
-            MainUI.getInstance().refreshTable();
-        }
+        // Run I/O in a separate thread
+        new Thread(() -> {
+            TaskStorage.saveTask();
+
+            // Update UI back on the main thread
+            SwingUtilities.invokeLater(() -> {
+                if (MainUI.getInstance() != null) {
+                    MainUI.getInstance().refreshTable();
+                }
+            });
+        }).start();
     }
 /** Create a new task from the input of TaskUI*/
     public static void create(String name,String description,int priority,LocalDateTime deadline ){
         name = checkName(name);
         description = checkDescription(description);
-        Task newTask = new Task(name, description, priority,deadline );
+        Task newTask = new Task(name, description, priority,deadline);
         taskList.add(newTask);
         finalSave();
     }
-//    TODO: needs to decouple this
 /** Edit existing task by using the inputs from taskUI*/
-    public static void edit(Task task,String name,String description,int priority,LocalDateTime deadline,boolean isComplete){
-        task.setName(checkName(name));
-        task.setDescription(checkDescription(description));
-        task.setPriority(priority);
-        task.setDeadline(deadline);
-        task.setComplete(isComplete);
-        taskList.set(task.getTaskNumber() -1, task);
+    public static void edit(Task originalTask, String name,String description,int priority,LocalDateTime deadline,boolean isComplete){
+        int index = taskList.indexOf(originalTask);
+        name  = checkName(name);
+        originalTask.setName(name);
+        originalTask.setDescription(description);
+        originalTask.setPriority(priority);
+        originalTask.setDeadline(deadline);
+        originalTask.setComplete(isComplete);
+        taskList.set(index, originalTask);
         finalSave();
     }
 /** Removes task from <code>Model.Task.taskList</code> and updates the UI*/

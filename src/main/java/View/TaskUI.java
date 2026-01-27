@@ -60,21 +60,21 @@ public class TaskUI extends JFrame implements ActionListener {
         this.currentTask = task;
         createdLable.setVisible(true);
         createdField.setVisible(true);
-        nameField.setText(task.name());
+        nameField.setText(task.getName());
         isCompleted.setSelected(task.isComplete());
-        descriptionField.setText(task.description());
-        priorityBox.setSelectedItem(task.priority());
+        descriptionField.setText(task.getDescription());
+        priorityBox.setSelectedItem(task.getPriority());
         createdField.setText(task.getCreated_at());
         if(task.getDeadLine() != null) {
             enableDeadline.setSelected(true);
             dateTimePicker.setDateTimePermissive(task.getDeadLine());
         }
         if(isEditable){
-            this.setTitle("Edit Task - " + task.name());
+            this.setTitle("Edit Task - " + task.getName());
             isCompleted.setEnabled(true);
         }
         if(!isEditable){
-            this.setTitle("View Task - " + task.name());
+            this.setTitle("View Task - " + task.getName());
             save.setVisible(false);
             cancel.setText("Close");
             nameField.setEditable(false);
@@ -97,6 +97,9 @@ public class TaskUI extends JFrame implements ActionListener {
             return null;
         return dateTimePicker.getDateTimePermissive();
     }
+    private boolean getStatus(){
+        return isCompleted.isSelected();
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -112,10 +115,9 @@ public class TaskUI extends JFrame implements ActionListener {
             if(currentTask == null){
                 ManageTask.create(name,description,priority, getDateTime());
             }
-            /* TODO: Needs to decouple TaskUI and ManageTask
             else{
-                ManageTask.edit(name,description,priority,getDateTime(), getIsCompleted());
-            }*/
+                ManageTask.edit(currentTask, name,description,priority,getDateTime(), getStatus());
+            }
             this.dispose();
         }
     }

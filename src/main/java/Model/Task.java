@@ -10,7 +10,8 @@ import java.util.ArrayList;
 
 public class Task {
     private static int lastId = 0;
-    private int  task_number, priority;
+    private final int  task_number;
+    private int priority;
     private String name,description;
     private final LocalDateTime created_at;
     private LocalDateTime deadline;
@@ -44,53 +45,29 @@ public class Task {
         }
     }
 
-    public int getTaskNumber() {
-        return task_number;
-    }
+    public int getTaskNumber() {return task_number;}
 
 
-    public int priority() {
-        return priority;
-    }
+    public int getPriority() {return priority;}
 
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
+    public void setPriority(int priority) {this.priority = priority;}
 
-    public String name() {
-        return name;
-    }
+    public String getName() {return name;}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name) {this.name = name;}
 
-    public String description() {
-        return description;
-    }
+    public String getDescription() {return description;}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public void setDescription(String description) {this.description = description;}
 
-    public String getCreated_at() {
-        return created_at.format(HandleDateTime.dateTimeFormat);
-    }
+    public String getCreated_at() {return created_at.format(HandleDateTime.dateTimeFormat);}
 
 
-    public LocalDateTime getDeadLine() {
-        return deadline;
-    }
+    public LocalDateTime getDeadLine() {return deadline;}
 
-    public void setDeadline(LocalDateTime deadline) {
-        this.deadline = deadline;
-    }
+    public void setDeadline(LocalDateTime deadline) {this.deadline = deadline;}
 
-    public boolean isComplete() {
-        return isComplete;
-    }
+    public boolean isComplete() {return isComplete;}
 
-    public void setComplete(boolean complete) {
-        isComplete = complete;
-    }
+    public void setComplete(boolean complete) {isComplete = complete;}
 }
