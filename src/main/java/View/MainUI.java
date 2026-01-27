@@ -1,6 +1,5 @@
 package View;
 
-import Controller.HandleDateTime;
 import Controller.ManageTask;
 import Model.Task;
 
@@ -11,8 +10,10 @@ import java.awt.event.*;
 import java.net.URL;
 
 /**
- * Main UI of app. Use <code>MainUI.getINstance()</code> to create instance. MainUI has a new Task button ( + New )
- * and show a list of all created tasks, showing there: name, priority, deadline, status as table
+ * The main user interface of the application.
+ * This class represents the primary window where users can view the list of tasks,
+ * add new tasks, and perform actions like viewing, editing, or deleting existing tasks.
+ * It implements the Singleton pattern to ensure only one instance of the main window exists.
  */
 public class MainUI extends JFrame implements ActionListener {
 
@@ -24,6 +25,11 @@ public class MainUI extends JFrame implements ActionListener {
     JLabel taskCountLabel;
 
 
+    /**
+     * Constructs the MainUI window.
+     * Initializes the frame, sets up the layout, creates buttons, the task table,
+     * and configures event listeners.
+     */
     public MainUI(){
         super("TODO LIST App");
         instance = this;
@@ -102,15 +108,25 @@ public class MainUI extends JFrame implements ActionListener {
         refreshTable();
         setVisible(true);
     }
-    /** This enforces singleton instance of the MainUi to prevent unwanted behavior.
-     * Creates new instance if no instances are running, else return the running instance*/
+
+    /**
+     * Retrieves the singleton instance of the MainUI.
+     * If the instance does not exist, it creates a new one.
+     *
+     * @return The singleton instance of MainUI.
+     */
     public static MainUI getInstance(){
         if(instance == null)
             instance = new MainUI();
         return instance;
     }
 
-/** Sets logo for the window. Accept JFrame as input. location for is stored in <code>String logoPath</code> */
+    /**
+     * Sets the application logo for the specified frame.
+     * The logo is loaded from the resources folder.
+     *
+     * @param frame The JFrame to set the icon for.
+     */
     public static void setLogo(JFrame frame){
         String logoPath = "/Icons/Logo.jpg";
         URL logoUrl = MainUI.class.getResource(logoPath);
@@ -121,15 +137,26 @@ public class MainUI extends JFrame implements ActionListener {
         }
     }
 
-/** Accepts String and JPanel as input. Creates new button with specified string as text, adds ActionListener
-  * then adds the button to the specified panel and return the button*/
+    /**
+     * Creates a new button with the specified text and adds it to the given panel.
+     * Also registers the current class as the ActionListener for the button.
+     *
+     * @param text  The text to display on the button.
+     * @param panel The JPanel to add the button to.
+     * @return The created JButton.
+     */
     public JButton createButton(String text, JPanel panel){
         JButton button = new JButton(text);
         button.addActionListener(this);
         panel.add(button);
         return button;
     }
-    /** Refresh contents of the task table by using contents from tasklist*/
+
+    /**
+     * Refreshes the task table with the current list of tasks.
+     * Clears the existing table data and repopulates it from {@link Model.Task#taskList}.
+     * Also updates the task count label.
+     */
     public void refreshTable() {
         // 1. Clear existing rows so we don't add duplicates
         tableModel.setRowCount(0);
@@ -139,20 +166,18 @@ public class MainUI extends JFrame implements ActionListener {
         for (Task task : Task.taskList) {
             String deadlineStr = "--/--/----";
             if (task.getDeadLine() != null) {
-                deadlineStr = task.getDeadLine().format(HandleDateTime.dateTimeFormat);
+                deadlineStr = task.getDeadLine().format(Task.DATE_FORMAT);
             }
             if(task.isComplete())
                 completedTasks++;
             Object[] rowData = {
-                    task.name(),
-                    task.priority(),
+                    task.getName(),
+                    task.getPriority(),
                     deadlineStr,
                     task.isComplete() ? "Done" : "Pending"
             };
 
             tableModel.addRow(rowData);
-//            Resets lastID to size of taskList at every refresh
-            Task.setLastID(Task.taskList.size());
         }
         
         // Update task count label
@@ -163,7 +188,11 @@ public class MainUI extends JFrame implements ActionListener {
     }
 
 
-
+    /**
+     * Handles button click events.
+     *
+     * @param e The action event.
+     */
     @Override
     public void actionPerformed(ActionEvent e){
         Object source = e.getSource();
@@ -184,6 +213,13 @@ public class MainUI extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Sets up keyboard shortcuts for common actions.
+     * Ctrl+N: New Task
+     * Delete: Delete Task
+     * Space: View Task
+     * Ctrl+E: Edit Task
+     */
     private void setKeyBinding(){
         KeyStroke ctrlN,delete,space, ctrlE;
         JRootPane rootPane = this.getRootPane();
@@ -226,11 +262,13 @@ public class MainUI extends JFrame implements ActionListener {
         });
     }
 
-    /** Provides a confirmation box and returns a boolean value<br>
-     *  Parameter: None<br>
-     *  return: boolean */
+    /**
+     * Displays a confirmation dialog for task deletion.
+     *
+     * @return True if the user confirms deletion, false otherwise.
+     */
     private boolean confirmDeletion() {
-        String title = "Delete Task: " + currentTask.name();
+        String title = "Delete Task: " + currentTask.getName();
         String message = "Are you sure you want to delete this task?";
         
         int response = JOptionPane.showConfirmDialog(

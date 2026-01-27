@@ -15,10 +15,18 @@
     </properties>
 
     <dependencies>
+        <!--  JSON writer (Gson) -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
+        </dependency>
+
+        <!-- Modern Date and Time Picker for Swing (LGoodDatePicker) -->
+        <dependency>
+            <groupId>com.github.lgooddatepicker</groupId>
+            <artifactId>LGoodDatePicker</artifactId>
+            <version>11.2.1</version>
         </dependency>
     </dependencies>
 

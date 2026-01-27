@@ -1,30 +1,36 @@
 package View;
 
-import Controller.HandleDateTime;
 import Controller.ManageTask;
 import Model.Task;
+import com.github.lgooddatepicker.components.DateTimePicker;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
+import java.time.LocalDateTime;
 
-/** Create a "Create new Task" window for user to create a new task.
- *  Called as result of pressing "new" button in MainUI
+/**
+ * Represents the window for creating or editing a task.
+ * This class provides a form with fields for task details such as name, description,
+ * priority, and deadline. It handles user input and delegates task management to {@link Controller.ManageTask}.
  */
 public class TaskUI extends JFrame implements ActionListener {
 
-    JTextField nameField;
+    JLabel createdLable;
+    JTextField nameField, createdField;
     JTextArea descriptionField;
     JButton save, cancel;
     JCheckBox enableDeadline,isCompleted;
-    JComboBox<String> hourBox, minuteBox, amOrPmBox;
+    DateTimePicker dateTimePicker;
     JComboBox<Integer> priorityBox;
-    JSpinner dateSpinner;
 
     private Task currentTask = null;
 
+    /**
+     * Constructs a new TaskUI window for creating a task.
+     * Initializes the UI components and sets up the window layout.
+     */
     TaskUI(){
         super("Create Task");
         MainUI.setLogo(this);
@@ -38,7 +44,7 @@ public class TaskUI extends JFrame implements ActionListener {
         add(panels.createNamePanel());
         add(panels.createPriorityPanel());
         add(panels.createDescriptionPanel());
-        add(panels.createDateTimePanel());
+        add(panels.createDateTimePickerPanel());
 
         JPanel buttonPanel = new JPanel();
         save = new JButton("Save");
@@ -53,75 +59,77 @@ public class TaskUI extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+    /**
+     * Constructs a new TaskUI window for viewing or editing an existing task.
+     * Pre-fills the fields with the task's data.
+     *
+     * @param task       The task to be viewed or edited.
+     * @param isEditable If true, allows editing the task; otherwise, opens in read-only mode.
+     */
     TaskUI(Task task,boolean isEditable){
         this();
         MainUI.setLogo(this);
 
         this.currentTask = task;
-        nameField.setText(task.name());
+        createdLable.setVisible(true);
+        createdField.setVisible(true);
+        nameField.setText(task.getName());
         isCompleted.setSelected(task.isComplete());
-        descriptionField.setText(task.description());
-        priorityBox.setSelectedItem(task.priority());
-        if(task.getDeadLine() != null){
+        descriptionField.setText(task.getDescription());
+        priorityBox.setSelectedItem(task.getPriority());
+        createdField.setText(task.getCreated_at());
+        if(task.getDeadLine() != null) {
             enableDeadline.setSelected(true);
-            Date dateForSpinner = HandleDateTime.LocalTOLegacyDate(task.getDeadLine());
-            dateSpinner.setValue(dateForSpinner);
-            int hour = task.getDeadLine().getHour();
-            if( hour > 11){
-                amOrPmBox.setSelectedIndex(1);
-                if (hour != 12)
-                    hour -= 12;
-            }
-            else{
-                amOrPmBox.setSelectedIndex(0);
-                if (hour == 0)
-                    hour = 12;
-            }
-            int minute = task.getDeadLine().getMinute();
-            hourBox.setSelectedItem(String.format("%02d", hour));
-            minuteBox.setSelectedItem(String.format("%02d", minute));
-
+            dateTimePicker.setDateTimePermissive(task.getDeadLine());
         }
         if(isEditable){
-            this.setTitle("Edit Task - " + task.name());
+            this.setTitle("Edit Task - " + task.getName());
             isCompleted.setEnabled(true);
         }
         if(!isEditable){
-            this.setTitle("View Task - " + task.name());
+            this.setTitle("View Task - " + task.getName());
+            save.setVisible(false);
+            cancel.setText("Close");
             nameField.setEditable(false);
             isCompleted.setEnabled(false);
             descriptionField.setEditable(false);
             priorityBox.setEditable(false);
-            if(task.getDeadLine() != null) {
-                enableDeadline.setEnabled(false);
-                hourBox.setEnabled(false);
-                minuteBox.setEnabled(false);
-                amOrPmBox.setEnabled(false);
-                dateSpinner.setEnabled(false);
-                save.setVisible(false);
-                cancel.setText("Close");
-            }else{
+            createdLable.setEnabled(true);
+            createdField.setEnabled(true);
+            enableDeadline.setEnabled(false);
+            dateTimePicker.setEnabled(false);
+            if(task.getDeadLine() == null) {
                 enableDeadline.setVisible(false);
-                hourBox.setVisible(false);
-                minuteBox.setVisible(false);
-                amOrPmBox.setVisible(false);
-                dateSpinner.setVisible(false);
+                dateTimePicker.setVisible(false);
             }
         }
     }
 
-    public String getName(){return nameField.getText();}
-    public String getDescription(){return descriptionField.getText();}
-    public int getPriority(){return Integer.parseInt(priorityBox.getSelectedItem().toString());}
-    public String getDateTime(){
+    /**
+     * Retrieves the selected date and time from the picker.
+     *
+     * @return The selected {@link LocalDateTime}, or null if the deadline is not enabled.
+     */
+    public LocalDateTime getDateTime(){
         if (!enableDeadline.isSelected())
             return null;
-        String time =  hourBox.getSelectedItem() + ":" + minuteBox.getSelectedItem()
-                + " " + amOrPmBox.getSelectedItem();
-        Date rawDate = (Date) dateSpinner.getValue();
-        return HandleDateTime.rawTimeTOSring(rawDate, time);
+        return dateTimePicker.getDateTimePermissive();
     }
-    public boolean getIsCompleted(){return isCompleted.isSelected();}
+
+    /**
+     * Retrieves the completion status from the checkbox.
+     *
+     * @return True if the task is marked as complete, false otherwise.
+     */
+    private boolean getStatus(){
+        return isCompleted.isSelected();
+    }
+
+    /**
+     * Handles button click events for Save and Cancel actions.
+     *
+     * @param e The action event.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -130,27 +138,33 @@ public class TaskUI extends JFrame implements ActionListener {
             this.dispose();
         }
         else if(source ==  save){
+            String name = nameField.getText();
+            String description = descriptionField.getText();
+            Object selected = priorityBox.getSelectedItem();
+            int priority = (selected != null) ? (Integer) selected : 1;
             if(currentTask == null){
-                ManageTask.create(this);
+                ManageTask.create(name,description,priority, getDateTime());
             }
             else{
-                ManageTask.edit(this,currentTask);
+                ManageTask.edit(currentTask, name,description,priority,getDateTime(), getStatus());
             }
             this.dispose();
         }
     }
 
 
-    /** This inner class of TaskUI is to create and customize the different panels for name,description & dateTime
-     *  This is to fine tune the appearence of thses fields */
+    /**
+     * This inner class is responsible for creating and organizing the various UI panels
+     * used within the {@link TaskUI} frame. It encapsulates the panel creation logic
+     * to maintain a clean and organized main class structure.
+     */
     class WindowPanels {
-        String[] stringArrayRange(int min, int max){
-            String[] stringArray = new String[max - min + 1];
-            for(int i = min; i <= max; i++){
-                stringArray[i - min] = String.format("%02d", i);
-            }
-            return stringArray;
-        }
+        /**
+         * Creates and configures the panel for entering the task name and marking it as complete.
+         * This panel includes a text field for the name and a checkbox for completion status.
+         *
+         * @return A {@code JPanel} containing the name input components.
+         */
         JPanel createNamePanel(){
             JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             namePanel.add(new JLabel("Name:"));
@@ -162,6 +176,13 @@ public class TaskUI extends JFrame implements ActionListener {
             namePanel.add(isCompleted);
             return namePanel;
         }
+
+        /**
+         * Creates and configures the panel for setting the task's priority and displaying its creation date.
+         * This panel includes a combo box for priority selection and non-editable fields for the creation timestamp.
+         *
+         * @return A {@code JPanel} containing the priority and creation date components.
+         */
         JPanel createPriorityPanel(){
             JPanel priorityPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             priorityPanel.add(new JLabel("Priority:"));
@@ -170,8 +191,25 @@ public class TaskUI extends JFrame implements ActionListener {
             priorityBox.setPrototypeDisplayValue(10); // Number of digits inside this is the size of the box. Data type of value = data type of box
             priorityBox.setSelectedItem(1);
             priorityPanel.add(priorityBox);
+
+//            Placeholder for showing created date
+            createdLable = new JLabel("Created at:");
+            createdLable.setVisible(false);
+            priorityPanel.add(createdLable);
+            createdField = new JTextField(20);
+            createdField.setEditable(false);
+            createdField.setVisible(false);
+            createdField.setEnabled(false);
+            priorityPanel.add(createdField);
             return priorityPanel;
         }
+
+        /**
+         * Creates and configures the panel for entering the task description.
+         * This panel includes a {@code JTextArea} with line wrapping enabled, enclosed in a {@code JScrollPane}.
+         *
+         * @return A {@code JPanel} containing the description input component.
+         */
         JPanel createDescriptionPanel() {
             JPanel descriptionPanel = new JPanel(new BorderLayout());
             descriptionPanel.add(new JLabel("Description:"), BorderLayout.NORTH);
@@ -185,61 +223,32 @@ public class TaskUI extends JFrame implements ActionListener {
 
             return descriptionPanel;
         }
-        JPanel createDateTimePanel(){
+
+        /**
+         * Creates and configures the panel for setting the task's deadline using a {@code DateTimePicker}.
+         * This panel includes a checkbox to enable or disable the deadline and the {@code DateTimePicker} component itself.
+         *
+         * @return A {@code JPanel} containing the deadline selection components.
+         */
+        JPanel createDateTimePickerPanel(){
             JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
             enableDeadline = new JCheckBox("DeadLine:\n");
-//            Create a model that has current date and make that spinner
-            SpinnerDateModel dateModel = new SpinnerDateModel();
-            dateSpinner = new JSpinner(dateModel);
-            JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner,"dd/MM/yyyy");
-            dateSpinner.setEditor(dateEditor);
-//            Setting Time values combo box
-            String[] hour = stringArrayRange(1, 12);
-            String[] minute = stringArrayRange(0, 59);
-            String[] amOrPm = {"AM","PM"};
-//            Creating combo box
-            hourBox = new JComboBox<>(hour);
-            minuteBox = new JComboBox<>(minute);
-            amOrPmBox = new JComboBox<>(amOrPm);
+           dateTimePicker = new DateTimePicker();
+            dateTimePicker.setEnabled(false);
 
-//            Setting current time as default values
-            java.util.Calendar now = java.util.Calendar.getInstance();
-            int nowHour = now.get(java.util.Calendar.HOUR);
-            hourBox.setPrototypeDisplayValue("000");
-            if(nowHour == 0) nowHour = 12;
-            hourBox.setSelectedItem(String.format("%02d", nowHour));
-            int nowMinutes = now.get(java.util.Calendar.MINUTE);
-            minuteBox.setPrototypeDisplayValue("000");
-            minuteBox.setSelectedItem(String.format("%02d", nowMinutes));
-            amOrPmBox.setSelectedIndex(now.get(java.util.Calendar.AM_PM));
-            amOrPmBox.setPrototypeDisplayValue("000");
-
-            dateSpinner.setEnabled(false);
-            hourBox.setEnabled(false);
-            minuteBox.setEnabled(false);
-            amOrPmBox.setEnabled(false);
-
-            ActionListener toggleAction = e -> {
+            ActionListener toggleAction = _ -> {
                 boolean isEnabled = enableDeadline.isSelected();
-                dateSpinner.setEnabled(isEnabled);
-                hourBox.setEnabled(isEnabled);
-                minuteBox.setEnabled(isEnabled);
-                amOrPmBox.setEnabled(isEnabled);
+                dateTimePicker.setEnabled(isEnabled);
+                if (isEnabled && dateTimePicker.getDateTimePermissive() == null) {
+                    dateTimePicker.setDateTimePermissive(LocalDateTime.now());
+                }
             };
             enableDeadline.addActionListener(toggleAction);
             enableDeadline.setSelected(false);
 
             datePanel.add(enableDeadline);
-            datePanel.add(Box.createHorizontalStrut(10));
-            datePanel.add(new JLabel("Time:"));
-            datePanel.add(hourBox);
-            datePanel.add(new JLabel(":"));
-            datePanel.add(minuteBox);
-            datePanel.add(amOrPmBox);
-            datePanel.add(Box.createHorizontalStrut(10)); // Add a 10px gap for spacing
-            datePanel.add(new JLabel("Date:"));
-            datePanel.add(dateSpinner);
+            datePanel.add(dateTimePicker);
 
             return datePanel;
         }
