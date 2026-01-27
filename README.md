@@ -14,6 +14,15 @@ A professional, feature-rich TODO list application built with Java Swing. This a
 *   **Data Persistence:** Tasks are automatically saved to a JSON file (`Tasks.json`), ensuring your data is preserved between sessions.
 *   **User-Friendly Interface:** Clean and intuitive GUI built using Java Swing.
 
+
+## Screenshots
+<img width="40%"  title="Main UI" alt="TODO -Main UI" src="https://github.com/user-attachments/assets/b0f4dbf2-6a8e-453f-bcea-6fd930734ce9" />
+<img width="441" height="329" title= "TODO - Create new Task" alt="TODO - Create task" src="https://github.com/user-attachments/assets/9eb34c60-0845-4374-9e82-57c412e0818f" />
+<img width="441" height="329" title="TODO - View task" alt="TODO - View task" src="https://github.com/user-attachments/assets/54beccfa-4794-4997-9c79-4de077602fe4" />
+
+<img width="441" height="329" title="TODO - Edit task" alt="TODO - Edit task" src="https://github.com/user-attachments/assets/5de3a733-da2d-45eb-a96d-3bf143053f08" />
+
+
 ## Project Specification
 
 *   **Language:** Java
