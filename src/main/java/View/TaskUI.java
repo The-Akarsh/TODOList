@@ -10,8 +10,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 
-/** Create a "Create new Task" window for user to create a new task.
- *  Called as result of pressing "new" button in MainUI
+/**
+ * Represents the window for creating or editing a task.
+ * This class provides a form with fields for task details such as name, description,
+ * priority, and deadline. It handles user input and delegates task management to {@link Controller.ManageTask}.
  */
 public class TaskUI extends JFrame implements ActionListener {
 
@@ -25,6 +27,10 @@ public class TaskUI extends JFrame implements ActionListener {
 
     private Task currentTask = null;
 
+    /**
+     * Constructs a new TaskUI window for creating a task.
+     * Initializes the UI components and sets up the window layout.
+     */
     TaskUI(){
         super("Create Task");
         MainUI.setLogo(this);
@@ -53,6 +59,13 @@ public class TaskUI extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+    /**
+     * Constructs a new TaskUI window for viewing or editing an existing task.
+     * Pre-fills the fields with the task's data.
+     *
+     * @param task       The task to be viewed or edited.
+     * @param isEditable If true, allows editing the task; otherwise, opens in read-only mode.
+     */
     TaskUI(Task task,boolean isEditable){
         this();
         MainUI.setLogo(this);
@@ -92,14 +105,31 @@ public class TaskUI extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Retrieves the selected date and time from the picker.
+     *
+     * @return The selected {@link LocalDateTime}, or null if the deadline is not enabled.
+     */
     public LocalDateTime getDateTime(){
         if (!enableDeadline.isSelected())
             return null;
         return dateTimePicker.getDateTimePermissive();
     }
+
+    /**
+     * Retrieves the completion status from the checkbox.
+     *
+     * @return True if the task is marked as complete, false otherwise.
+     */
     private boolean getStatus(){
         return isCompleted.isSelected();
     }
+
+    /**
+     * Handles button click events for Save and Cancel actions.
+     *
+     * @param e The action event.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
